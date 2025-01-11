@@ -4,13 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "vite --mode development",
+    "prod": "vite --mode production",
+    "build:prod": "tsc -b && vite build --mode production",
+    "build:dev": "tsc -b && vite build --mode development",
     "lint": "eslint src",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "vitest run"
+    "test": "firebase emulators:exec 'vitest run'"
   },
   "dependencies": {
     "firebase": "^11.1.0",
@@ -20,6 +22,7 @@
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.3",
     "@eslint/js": "^9.18.0",
+    "@firebase/rules-unit-testing": "^4.0.1",
     "@storybook/addon-essentials": "^8.4.7",
     "@storybook/addon-interactions": "^8.4.7",
     "@storybook/addon-onboarding": "^8.4.7",
