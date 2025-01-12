@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import App from './AppRouter.tsx'
 import { initializeApp } from 'firebase/app'
 
+console.log(import.meta.env);
+
 export const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
   authDomain: import.meta.env.VITE_AUTH_DOMAIN,
@@ -11,6 +13,8 @@ export const firebaseConfig = {
   messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_APP_ID,
 };
+
+console.log('Firebase Config:', firebaseConfig);
 
 //@ts-expect-error TS6133 (TS6133) 'app' is declared but its value is never read.
 const app = initializeApp(firebaseConfig); // eslint-disable-line
