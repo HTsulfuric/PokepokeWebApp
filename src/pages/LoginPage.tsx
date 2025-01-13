@@ -3,17 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import {
   getAuth,
   GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup,
   onAuthStateChanged,
   setPersistence,
   browserLocalPersistence,
+  getAdditionalUserInfo,
 } from 'firebase/auth';
+import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
 export function LoginPage() {
   const navigate = useNavigate();
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
+  const db = getFirestore();
 
   useEffect(() => {
     console.log('認証状態を監視します');
@@ -27,25 +29,17 @@ export function LoginPage() {
         console.error('Persistence setting error:', error);
       });
 
-    // 2. リダイレクト結果を取得
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result && result.user) {
-          console.log('リダイレクト結果:', result.user);
+    // 2. 認証状態の変化を監視
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists() && userDoc.data()?.username) {
+          console.log('ユーザーは既に登録済みです:', user);
           navigate('/main');
         } else {
-          console.log('リダイレクト結果なし');
+          console.log('ユーザーは未登録です');
+          navigate('/setup-username');
         }
-      })
-      .catch((error) => {
-        console.error('リダイレクト結果取得エラー:', error);
-      });
-
-    // 3. 認証状態の変化を監視
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log('ユーザーがログインしています:', user);
-        navigate('/main');
       } else {
         console.log('ユーザーは未ログインです');
       }
@@ -53,13 +47,23 @@ export function LoginPage() {
 
     // クリーンアップ
     return () => unsubscribe();
-  }, [auth, navigate]);
+  }, [auth, navigate, db]);
 
   function handleGoogleLogin() {
     console.log('Googleログインを実行します');
-    signInWithRedirect(auth, provider)
-      .then(() => console.log('リダイレクトします'))
-      .catch((e) => console.error('リダイレクトエラー:', e));
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
+        if (isNewUser) {
+          navigate('/setup-username');
+        } else {
+          navigate('/main');
+        }
+      })
+      .catch((e) => {
+        console.error('ポップアップエラー:', e);
+        alert('ポップアップがブロックされています。ポップアップを許可してください。');
+      });
   }
 
   return (

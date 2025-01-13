@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './AppRouter.tsx'
 import { initializeApp } from 'firebase/app'
@@ -16,7 +15,5 @@ export const firebaseConfig = {
 const app = initializeApp(firebaseConfig); // eslint-disable-line
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+  <App />
 );
