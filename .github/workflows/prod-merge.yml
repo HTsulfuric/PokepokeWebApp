@@ -19,12 +19,14 @@ jobs:
           npm run test
       - name: build project
         run: npm run build:prod
-        env: VITE_API_KEY = ${{ secrets.VITE_API_KEY_PRODUCTION}}
-          VITE_AUTH_DOMAIN = ${{ secrets.VITE_AUTH_DOMAIN_PRODUCTION}}
-          VITE_PROJECT_ID = ${{ secrets.VITE_PROJECT_ID_PRODUCTION }}
-          VITE_STORAGE_BUCKET = ${{ secrets.VITE_STORAGE_BUCKET_PRODUCTION }}
-          VITE_MESSAGING_SENDER_ID = ${{ secrets.VITE_MESSAGING_SENDER_ID_PRODUCTION }}
-          VITE_APP_ID = ${{ secrets.VITE_APP_ID_PRODUCTION }}
+        env:
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY_PRODUCTION}}
+          VITE_AUTH_DOMAIN: ${{ secrets.VITE_AUTH_DOMAIN_PRODUCTION}}
+          VITE_PROJECT_ID: ${{ secrets.VITE_PROJECT_ID_PRODUCTION }}
+          VITE_STORAGE_BUCKET: ${{ secrets.VITE_STORAGE_BUCKET_PRODUCTION }}
+          VITE_MESSAGING_SENDER_ID: ${{ secrets.VITE_MESSAGING_SENDER_ID_PRODUCTION }}
+          VITE_APP_ID: ${{ secrets.VITE_APP_ID_PRODUCTION }}
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
