@@ -6,14 +6,13 @@ import { Deck, Record } from '../types/index.ts';
 import { fetchDecks } from '../services/firebase.ts';
 
 export function MatchRecord() {
-  const [, setDecks] = useState<Deck[]>([]);
+  const [decks, setDecks] = useState<Deck[]>([]);
   const [generation, setGeneration] = useState('');
   const [myDeck, setMyDeck] = useState('');
   const [opDeck, setOpDeck] = useState('');
   const [order, setOrder] = useState<'first' | 'second'>('first');
   const [result, setResult] = useState<'win' | 'lose'>('win');
   const [comment, setComment] = useState('');
-  const [decks,] = useState<Deck[]>([]);
   const [records, setRecords] = useState<Record[]>([]);
   const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
   const [editingRecord, setEditingRecord] = useState<Record | null>(null);
@@ -30,8 +29,9 @@ export function MatchRecord() {
   useEffect(() => {
     const fetchData = async () => {
       const decksData = await fetchDecks();
+      console.log('decksData: ', decksData);
       setDecks(decksData || []);
-    }
+    };
 
     fetchData();
   }, [auth, db, navigate]);
@@ -56,7 +56,10 @@ export function MatchRecord() {
         limit(20)
       );
       const querySnapshot = await getDocs(q);
-      const recordsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Record));
+      const recordsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      } as Record));
       console.log('recordsData: ', recordsData);
       setRecords(recordsData);
       setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);

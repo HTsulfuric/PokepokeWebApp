@@ -15,7 +15,9 @@ export const fetchDecks = async () => {
   try {
     const q = query(collection(db, 'decks'), where('userId', '==', auth.currentUser.uid));
     const querySnapshot = await getDocs(q);
-    const decksData = querySnapshot.docs.map(doc => doc.data() as Deck);
+    const decksData = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data() } as Deck));
     return decksData;
   } catch (error) {
     console.error('Error fetching decks: ', error);
