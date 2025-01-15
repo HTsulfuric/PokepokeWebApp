@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, limit, startAfter, deleteDoc, updateDoc, doc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, limit, startAfter, deleteDoc, updateDoc, doc, DocumentSnapshot } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { Deck, Record } from '../types/index.ts';
 import { fetchDecks } from '../services/firebase.ts';
@@ -15,7 +15,7 @@ export function MatchRecord() {
   const [comment, setComment] = useState('');
   const [decks,] = useState<Deck[]>([]);
   const [records, setRecords] = useState<Record[]>([]);
-  const [lastVisible, setLastVisible] = useState<any>(null);
+  const [lastVisible, setLastVisible] = useState<DocumentSnapshot | null>(null);
   const [editingRecord, setEditingRecord] = useState<Record | null>(null);
   const [editGeneration, setEditGeneration] = useState('');
   const [editMyDeck, setEditMyDeck] = useState('');
