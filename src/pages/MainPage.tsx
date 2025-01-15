@@ -36,9 +36,13 @@ export function MainPage() {
     fetchUsername();
   }, [auth, db]);
 
+  useEffect(() => {
+    document.title = `ポケポケ戦績管理α - ${username}さん`;
+  }, [username]);
+
   return (
     <div>
-      <h1>戦績管理ベータ - {username}さん</h1>
+      <h1>ポケポケ戦績管理α - {username}さん</h1>
       <button onClick={() => handleSignOut()}>ログアウト</button>
       <div>
         <button onClick={() => setTab('decklist')}>デッキ一覧</button>

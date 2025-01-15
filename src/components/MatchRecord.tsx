@@ -6,6 +6,7 @@ import { Deck, Record } from '../types/index.ts';
 import { fetchDecks } from '../services/firebase.ts';
 
 export function MatchRecord() {
+  const [, setDecks] = useState<Deck[]>([]);
   const [generation, setGeneration] = useState('');
   const [myDeck, setMyDeck] = useState('');
   const [opDeck, setOpDeck] = useState('');
@@ -27,7 +28,12 @@ export function MatchRecord() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchDecks();
+    const fetchData = async () => {
+      const decksData = await fetchDecks();
+      setDecks(decksData || []);
+    }
+
+    fetchData();
   }, [auth, db, navigate]);
 
   useEffect(() => {

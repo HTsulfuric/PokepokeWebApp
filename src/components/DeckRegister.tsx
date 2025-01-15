@@ -1,24 +1,21 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
 import { Deck } from '../types/index.ts';
 import { fetchDecks } from '../services/firebase.ts';
+import { useAuth } from '../hooks/useAuth.ts';
 
 export function DeckRegister() {
-  const navigate = useNavigate();
   const [generation, setGeneration] = useState('1');
   const [deckName, setDeckName] = useState('');
   const [comment, setComment] = useState('');
-  const [decks] = useState<Deck[]>([]); // Use the Deck interface for the state
+  const [decks, setDecks] = useState<Deck[]>([]); // Use the Deck interface for the state
   const [collapsedGenerations, setCollapsedGenerations] = useState<{ [key: string]: boolean }>({});
   const db = getFirestore();
-  const auth = getAuth();
+  const currentUser = useAuth();
 
   const handleRegister = async () => {
-    if (!auth.currentUser) {
-      alert('No user is currently logged in');
-      navigate('/');
+    if (!currentUser) {
+      console.error('No user is currently logged in');
       return;
     }
 
@@ -39,14 +36,14 @@ export function DeckRegister() {
     }
 
     try {
-
       await addDoc(collection(db, 'decks'), {
         generation: generation,
         deckName: deckName,
         comment: comment,
-        userId: auth.currentUser.uid,
+        userId: currentUser.uid,
       });
-      fetchDecks(); // Fetch decks after adding a new one
+      const decksData = await fetchDecks();
+      setDecks(decksData || []);
     } catch (error) {
       console.error('Error adding document: ', error);
       alert('Failed to register deck. Please try again.');
@@ -54,15 +51,13 @@ export function DeckRegister() {
   };
 
   useEffect(() => {
-    fetchDecks();
-  }, [db, auth]);
-
-  useEffect(() => {
-    if (!auth.currentUser) {
-      alert('ログインしてください');
-      navigate('/');
+    const fetchData = async () => {
+      const decksData = await fetchDecks();
+      setDecks(decksData || []);
     }
-  }, [auth, navigate]);
+
+    fetchData();
+  }, [db]);
 
   const groupDecksByGeneration = decks.reduce((acc, deck) => {
     if (!acc[deck.generation]) {

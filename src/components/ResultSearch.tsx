@@ -6,7 +6,7 @@ import { Deck, Record } from '../types/index.ts';
 import { fetchDecks } from '../services/firebase.ts';
 
 const useFetchData = (db: Firestore, auth: Auth) => {
-  const [decks,] = useState<Deck[]>([]);
+  const [decks, setDecks] = useState<Deck[]>([]);
   const [records, setRecords] = useState<Record[]>([]);
 
   useEffect(() => {
@@ -21,7 +21,12 @@ const useFetchData = (db: Firestore, auth: Auth) => {
       }
     };
 
-    fetchDecks();
+    const fetchData = async () => {
+      const decksData = await fetchDecks();
+      setDecks(decksData || []);
+    };
+
+    fetchData();
     fetchRecords();
   }, [db, auth]);
 
@@ -65,7 +70,7 @@ export function ResultSearch() {
 
   useEffect(() => {
     handleSearch();
-  }, [generation, myDeck, opDeck]);
+  }, [generation, myDeck, opDeck, records]);
 
   const handleSearch = () => {
     let filteredRecords = records.filter((record) => record.generation === generation);
@@ -166,8 +171,7 @@ export function ResultSearch() {
         second_rate: rate_second,
       };
     }
-    const sortedResults = { '総合成績': results['累計'] || results['世代全体'] || results['このデッキでの対戦'], ...results }
-    setResult(sortedResults);
+    setResult(results);
   }
 
   const filteredDecks = decks.filter((deck) => deck.generation === generation);
@@ -212,10 +216,12 @@ export function ResultSearch() {
         <div>
           <h4>検索結果</h4>
           {Object.keys(result).map((deck) => (
-            <div key={deck}>
-              <h5>{deck}</h5>
-              先行試合数: {result[deck].first}  後攻試合数: {result[deck].second} 先行勝率: {result[deck].first_rate.toFixed(2)}% 後攻勝率: {result[deck].second_rate.toFixed(2)}%
-            </div>
+            result[deck] && (
+              <div key={deck}>
+                <h5>{deck}</h5>
+                先行試合数: {result[deck].first}  後攻試合数: {result[deck].second} 先行勝率: {result[deck].first_rate.toFixed(2)}% 後攻勝率: {result[deck].second_rate.toFixed(2)}%
+              </div>
+            )
           ))}
         </div>
       )}

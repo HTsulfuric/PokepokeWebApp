@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getFirestore, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
 import { Deck } from '../types/index.ts';
 import { fetchDecks } from '../services/firebase.ts';
+import { useAuth } from '../hooks/useAuth.ts';
 
 export function Decklist() {
-  const [decks] = useState<Deck[]>([]);
+  const [decks, setDecks] = useState<Deck[]>([]);
   const [collapsedGenerations, setCollapsedGenerations] = useState<{ [key: string]: boolean }>({});
   const [searchTerm, setSearchTerm] = useState('');
   const [searchGeneration, setSearchGeneration] = useState('');
@@ -14,8 +14,8 @@ export function Decklist() {
   const [editDeckName, setEditDeckName] = useState('');
   const [editComment, setEditComment] = useState('');
   const db = getFirestore();
-  const auth = getAuth();
   const navigate = useNavigate();
+  const currentUser = useAuth();
 
   const handleDelete = async (id: string) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this deck?');
@@ -25,7 +25,8 @@ export function Decklist() {
 
     try {
       await deleteDoc(doc(db, 'decks', id));
-      fetchDecks(); // Refresh the deck list after deleting
+      const decksData = await fetchDecks(); // Refresh the deck list after deleting
+      setDecks(decksData || []);
     } catch (error) {
       console.error('Error deleting deck: ', error);
     }
@@ -48,22 +49,32 @@ export function Decklist() {
         comment: editComment,
       });
       setEditingDeck(null);
-      fetchDecks(); // Refresh the deck list after updating
+
+      // Refresh the deck list after updating
+      const decksData = await fetchDecks();
+      setDecks(decksData || []);
+
+      // Reset the form fields
     } catch (error) {
       console.error('Error updating deck: ', error);
     }
   };
 
   useEffect(() => {
-    fetchDecks();
+    const fetchData = async () => {
+      const decksData = await fetchDecks();
+      setDecks(decksData || []);
+    };
+
+    fetchData();
   }, []);
 
   useEffect(() => {
-    if (!auth.currentUser) {
+    if (!currentUser) {
       alert('ログインしてください');
       navigate('/');
     }
-  }, [auth, navigate]);
+  }, [navigate]);
 
   const toggleGeneration = (generation: string) => {
     setCollapsedGenerations(prevState => ({
