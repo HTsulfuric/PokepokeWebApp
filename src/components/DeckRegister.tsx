@@ -42,6 +42,7 @@ export function DeckRegister() {
         comment: comment,
         userId: currentUser.uid,
       });
+      alert('デッキを登録しました');
       const decksData = await fetchDecks();
       setDecks(decksData || []);
     } catch (error) {
