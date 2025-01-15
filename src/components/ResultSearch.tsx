@@ -124,7 +124,15 @@ export function ResultSearch() {
     } else if (generation) {
       results['世代全体'] = calculateRates(filteredRecords);
     }
-    setResult(results);
+
+    const soretedResults = Object.keys(results).sort((a, b) =>
+      ((a === '累計' || a === '世代全体' || a === 'このデッキでの対戦') ? -1 : (b === '累計' || b === '世代全体' || b === 'このデッキでの対戦') ? 1 : 0))
+      .reduce((obj, key) => {
+        obj[key] = results[key];
+        return obj;
+      }, {} as typeof results);
+
+    setResult(soretedResults);
   }
 
   const filteredDecks = decks.filter((deck) => deck.generation === generation);
