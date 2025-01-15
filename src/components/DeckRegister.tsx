@@ -1,22 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getFirestore, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-
-// Define an interface for the deck objects
-interface Deck {
-  generation: string;
-  deckName: string;
-  comment: string;
-  userId: string;
-}
+import { Deck } from '../types/index.ts';
+import { fetchDecks } from '../services/firebase.ts';
 
 export function DeckRegister() {
   const navigate = useNavigate();
   const [generation, setGeneration] = useState('1');
   const [deckName, setDeckName] = useState('');
   const [comment, setComment] = useState('');
-  const [decks, setDecks] = useState<Deck[]>([]); // Use the Deck interface for the state
+  const [decks] = useState<Deck[]>([]); // Use the Deck interface for the state
   const [collapsedGenerations, setCollapsedGenerations] = useState<{ [key: string]: boolean }>({});
   const db = getFirestore();
   const auth = getAuth();
@@ -59,31 +53,16 @@ export function DeckRegister() {
     }
   };
 
-  const fetchDecks = async () => {
-    if (!auth.currentUser) {
-      alert('No user is currently logged in');
-      navigate('/');
-      return;
-    }
-
-    try {
-      console.log('Fetching decks...');
-
-      const q = query(collection(db, 'decks'), where('userId', '==', auth.currentUser.uid));
-      const querySnapshot = await getDocs(q);
-
-      console.log('querySnapshot: ', querySnapshot);
-      const decksData = querySnapshot.docs.map(doc => doc.data() as Deck); // Ensure the data is typed as Deck
-      console.log('decksData: ', decksData);
-      setDecks(decksData);
-    } catch (error) {
-      console.error('Error fetching decks: ', error);
-    }
-  };
-
   useEffect(() => {
     fetchDecks();
-  }, []);
+  }, [db, auth]);
+
+  useEffect(() => {
+    if (!auth.currentUser) {
+      alert('ログインしてください');
+      navigate('/');
+    }
+  }, [auth, navigate]);
 
   const groupDecksByGeneration = decks.reduce((acc, deck) => {
     if (!acc[deck.generation]) {
@@ -127,9 +106,9 @@ export function DeckRegister() {
       {Object.keys(groupDecksByGeneration).map((generation) => (
         <div key={generation}>
           <h4 onClick={() => toggleGeneration(generation)} >
-            {collapsedGenerations[generation] ? '▶' : '▼'}
+            {!collapsedGenerations[generation] ? '▶' : '▼'}
             {generation}期</h4>
-          {!collapsedGenerations[generation] && (
+          {collapsedGenerations[generation] && (
             <ul>
               {groupDecksByGeneration[generation].map((deck) => (
                 <li key={deck.deckName}>
