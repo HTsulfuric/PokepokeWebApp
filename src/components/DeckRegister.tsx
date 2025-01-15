@@ -33,15 +33,15 @@ export function DeckRegister() {
       console.log('userId: ', auth.currentUser.uid);
 
       await addDoc(collection(db, 'decks'), {
-        generation,
-        deckName,
-        comment,
+        generation: generation,
+        deckName: deckName,
+        comment: comment,
         userId: auth.currentUser.uid,
       });
       console.log("デバッグ: ", {
-        generation,
-        deckName,
-        comment,
+        generation: generation,
+        deckName: deckName,
+        comment: comment,
         userId: auth.currentUser.uid,
       });
       fetchDecks(); // Fetch decks after adding a new one
