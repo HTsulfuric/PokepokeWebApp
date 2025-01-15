@@ -47,6 +47,8 @@ const calculateRates = (records: Record[]) => {
     second: second,
     first_rate: rate_first,
     second_rate: rate_second,
+    total: first + second,
+    total_rate: ((win_first + win_second) / (first + second)) * 100,
   };
 };
 
@@ -54,7 +56,7 @@ export function ResultSearch() {
   const [generation, setGeneration] = useState('');
   const [myDeck, setMyDeck] = useState('');
   const [opDeck, setOpDeck] = useState('');
-  const [result, setResult] = useState<{ [key: string]: { first: number, second: number, first_rate: number, second_rate: number } } | null>(null);
+  const [result, setResult] = useState<{ [key: string]: { first: number, second: number, first_rate: number, second_rate: number, total: number, total_rate: number } } | null>(null);
   const db = getFirestore();
   const auth = getAuth();
   const navigate = useNavigate();
@@ -88,7 +90,9 @@ export function ResultSearch() {
         first: number;
         second: number,
         first_rate: number,
-        second_rate: number
+        second_rate: number,
+        total: number,
+        total_rate: number,
       }
     } = {};
 
@@ -101,20 +105,7 @@ export function ResultSearch() {
         results[deck] = calculateRates(deckRecords);
       });
 
-      const totalFirst = filteredRecords.filter((record) => record.order === 'first').length;
-      const totalSecond = filteredRecords.filter((record) => record.order === 'second').length;
-      const totalWinFirst = filteredRecords.filter((record) => record.result === 'win' && record.order === 'first').length;
-      const totalWinSecond = filteredRecords.filter((record) => record.result === 'win' && record.order === 'second').length;
-
-      const totalRateFirst = totalFirst === 0 ? 0 : (totalWinFirst / totalFirst) * 100;
-      const totalRateSecond = totalSecond === 0 ? 0 : (totalWinSecond / totalSecond) * 100;
-
-      results['累計'] = {
-        first: totalFirst,
-        second: totalSecond,
-        first_rate: totalRateFirst,
-        second_rate: totalRateSecond,
-      };
+      results['累計'] = calculateRates(filteredRecords);
 
     } else if (!myDeck && opDeck) {
       const myDecks = [...new Set(filteredRecords.map((record) => record.myDeck))];
@@ -124,52 +115,14 @@ export function ResultSearch() {
         results[deck] = calculateRates(deckRecords);
       });
 
-      const totalFirst = filteredRecords.filter((record) => record.order === 'first').length;
-      const totalSecond = filteredRecords.filter((record) => record.order === 'second').length;
-      const totalWinFirst = filteredRecords.filter((record) => record.result === 'win' && record.order === 'first').length;
-      const totalWinSecond = filteredRecords.filter((record) => record.result === 'win' && record.order === 'second').length;
-
-      const totalRateFirst = totalFirst === 0 ? 0 : (totalWinFirst / totalFirst) * 100;
-      const totalRateSecond = totalSecond === 0 ? 0 : (totalWinSecond / totalSecond) * 100;
-
-      results['累計'] = {
-        first: totalFirst,
-        second: totalSecond,
-        first_rate: totalRateFirst,
-        second_rate: totalRateSecond,
-      };
+      results['累計'] = calculateRates(filteredRecords);
 
     } else if (myDeck && opDeck) {
-      const first = filteredRecords.filter((record) => record.order === 'first').length;
-      const second = filteredRecords.filter((record) => record.order === 'second').length;
-      const win_first = filteredRecords.filter((record) => record.result === 'win' && record.order === 'first').length;
-      const win_second = filteredRecords.filter((record) => record.result === 'win' && record.order === 'second').length;
 
-      const rate_first = first === 0 ? 0 : (win_first / first) * 100;
-      const rate_second = second === 0 ? 0 : (win_second / second) * 100;
-
-      results['このデッキでの対戦'] = {
-        first: first,
-        second: second,
-        first_rate: rate_first,
-        second_rate: rate_second,
-      };
+      results['このデッキでの対戦'] = calculateRates(filteredRecords);
 
     } else if (generation) {
-      const first = filteredRecords.filter((record) => record.order === 'first').length;
-      const second = filteredRecords.filter((record) => record.order === 'second').length;
-      const win_first = filteredRecords.filter((record) => record.result === 'win' && record.order === 'first').length;
-      const win_second = filteredRecords.filter((record) => record.result === 'win' && record.order === 'second').length;
-
-      const rate_first = first === 0 ? 0 : (win_first / first) * 100;
-      const rate_second = second === 0 ? 0 : (win_second / second) * 100;
-
-      results['世代全体'] = {
-        first: first,
-        second: second,
-        first_rate: rate_first,
-        second_rate: rate_second,
-      };
+      results['世代全体'] = calculateRates(filteredRecords);
     }
     setResult(results);
   }
@@ -219,7 +172,8 @@ export function ResultSearch() {
             result[deck] && (
               <div key={deck}>
                 <h5>{deck}</h5>
-                先行試合数: {result[deck].first}  後攻試合数: {result[deck].second} 先行勝率: {result[deck].first_rate.toFixed(2)}% 後攻勝率: {result[deck].second_rate.toFixed(2)}%
+                <p>先行試合数: {result[deck].first}  後攻試合数: {result[deck].second} 先行勝率: {result[deck].first_rate.toFixed(2)}% 後攻勝率: {result[deck].second_rate.toFixed(2)}% </p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;合計試合数: {result[deck].total} 勝率: {result[deck].total_rate.toFixed(2)}%</p>
               </div>
             )
           ))}
