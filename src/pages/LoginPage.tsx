@@ -67,12 +67,10 @@ export function LoginPage() {
   }
 
   return (
-    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+    <div className='d-flex flex-column align-items-center mt-5'>
       <h2>ユーザー登録 / ログイン</h2>
       <button
-        onClick={handleGoogleLogin}
-        style={{ padding: '10px 20px', fontSize: '16px' }}
-      >
+        className='btn btn-primary mt-3'onClick={handleGoogleLogin}>
         Googleでログイン
       </button>
     </div>

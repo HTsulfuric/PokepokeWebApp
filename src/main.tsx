@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import App from './AppRouter.tsx'
 import { initializeApp } from 'firebase/app'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 export const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
