@@ -1,0 +1,93 @@
+.deck-item {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto auto;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding: 10px;
+}
+
+.deck-item span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border-right: 1px solid #ccc;
+  padding-right: 10px;
+}
+
+.deck-item span:last-child {
+  border-right: none;
+}
+
+.deck-item button {
+  padding: 5px 8px;
+  margin: 0;
+}
+
+.deck-list-header {
+  display: grid;
+  grid-template-columns: 1fr 2fr auto auto;
+  gap: 10px;
+  align-items: center;
+  font-weight: bold;
+  border-bottom: 2px solid #000;
+  border-top: 2px solid #000;
+  padding: 10px;
+}
+
+.deck-list-header span {
+  border-right: 1px solid #ccc;
+  padding-right: 10px;
+}
+
+.deck-list-header span:last-child {
+  border-right: none;
+}
+
+.edit-form {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+}
+
+.collapsable-content {
+  padding-left: 0;
+}
+
+select {
+  margin-left: 0;
+  padding: 8px;
+}
+
+@media (max-width: 600px) {
+  .deck-item,
+  .deck-list-header {
+    grid-template-columns: 1fr, 1fr, 1fr, 1fr;
+    text-align: center;
+    font-size: 1em;
+  }
+
+  .deck-item button {
+    margin-top: 5px;
+    font-size: 0.8em;
+  }
+
+  .deck-item span {
+    white-space: normal;
+    font-size: 0.8em;
+  }
+
+  .edit-form {
+    font-size: 0.8em;
+  }
+
+  select {
+    margin-left: 0;
+    padding: 6px;
+  }
+
+  .collapsable-content {
+    padding-left: 0;
+  }
+}

@@ -1,0 +1,77 @@
+* {
+  box-sizing: border-box;
+}
+
+.main-page {
+  padding: 20px;
+  overflow-x: hidden;
+}
+
+.title {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
+
+.username {
+  word-break: break-word;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.logout-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  flex: 1;
+  min-width: 100px;
+  margin: 5px 0;
+}
+
+.tab-buttons {
+  display: flex;
+  flex-wrap: nowrap;
+  border: 1px;
+  border-bottom: none;
+  overflow-x: auto;
+}
+
+.tab-buttons button {
+  flex: 1;
+  min-width: 100px;
+  margin: 0;
+  border-right: 1px solid #ccc;
+}
+
+.tab-buttons button:last-child {
+  border-right: none;
+}
+
+@media (max-width: 600px) {
+  .main-page {
+    padding: 10px;
+    font-size: 0.8em;
+  }
+
+  .title {
+    font-size: 1.5em;
+  }
+
+  .tab-buttons {
+    justify-content: space-between;
+  }
+
+  .tab-buttons button {
+    font-size: 0.8em;
+    padding: 8px 10px;
+  }
+
+  .logout-button {
+    font-size: 0.8em;
+    padding: 8px 10px;
+    margin: 5px 0;
+  }
+}

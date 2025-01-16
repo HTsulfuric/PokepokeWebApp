@@ -7,6 +7,8 @@ import { MatchRecord } from '../components/MatchRecord';
 import { ResultSearch } from '../components/ResultSearch';
 import { Decklist } from '../components/Decklist';
 
+import './MainPage.css';
+
 
 
 export function MainPage() {
@@ -41,15 +43,17 @@ export function MainPage() {
   }, [username]);
 
   return (
-    <div>
-      <h1>ポケポケ戦績管理α - {username}さん</h1>
-      <button onClick={() => handleSignOut()}>ログアウト</button>
-      <div>
+    <div className="main-page">
+      <h1 className="title">ポケポケ戦績管理α - <span className="username">{username}さん</span></h1>
+      <button className="logout-button" onClick={() => handleSignOut()}>ログアウト</button>
+      <br />
+      <div className="tab-buttons">
         <button onClick={() => setTab('decklist')}>デッキ一覧</button>
         <button onClick={() => setTab('deck')}>デッキ登録</button>
         <button onClick={() => setTab('match')}>対戦結果登録</button>
         <button onClick={() => setTab('search')}>戦績検索</button>
       </div>
+      <br />
       {tab === 'deck' && <DeckRegister />}
       {tab === 'decklist' && <Decklist />}
       {tab === 'match' && <MatchRecord />}

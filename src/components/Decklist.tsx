@@ -5,6 +5,8 @@ import { Deck } from '../types/index.ts';
 import { fetchDecks } from '../services/firebase.ts';
 import { useAuth } from '../hooks/useAuth.ts';
 
+import './Decklist.css';
+
 export function Decklist() {
   const [decks, setDecks] = useState<Deck[]>([]);
   const [collapsedGenerations, setCollapsedGenerations] = useState<{ [key: string]: boolean }>({});
@@ -116,7 +118,8 @@ export function Decklist() {
           <option key={i + 1} value={String(i + 1)}>{i + 1}期</option>
         ))}
       </select>
-      <br />
+      <br /> <br />
+      <p> 矢印をクリックして世代を折り畳めます</p>
       {Object.keys(groupedDecks).length === 0 ? (
         <p>一致がありません</p>
       ) : (
@@ -127,18 +130,43 @@ export function Decklist() {
               世代 {generation}
             </h4>
             {!collapsedGenerations[generation] && (
-              <ul>
+              <ul className="collapsable-content">
+                <li className="deck-list-header">
+                  <span>デッキ名</span>
+                  <span>コメント</span>
+                  <span>編集</span>
+                  <span>削除</span>
+                </li>
                 {groupedDecks[generation].map((deck, index) => (
-                  <li key={index}>
-                    {deck.deckName} - {deck.comment}
-                    <button
-                      onClick={() => handleEdit(deck)}>
-                      編集
-                    </button>
-                    <button
-                      onClick={() => handleDelete(deck.id)}>
-                      削除
-                    </button>
+                  <li key={index} className="deck-item">
+                    <span>{deck.deckName}</span>
+                    <span>{deck.comment || '-'}</span>
+                    <button onClick={() => handleEdit(deck)}>編集</button>
+                    <button onClick={() => handleDelete(deck.id)}>削除</button>
+                    {editingDeck && editingDeck.id === deck.id && (
+                      <div className="edit-form">
+                        <h3>デッキ編集</h3>
+                        <input
+                          type="text"
+                          placeholder="デッキ名"
+                          value={editDeckName}
+                          onChange={(e) => setEditDeckName(e.target.value)}
+                        />
+                        <br />
+                        <textarea
+                          placeholder="コメント(任意)"
+                          value={editComment}
+                          onChange={(e) => setEditComment(e.target.value)}
+                        />
+                        <br />
+                        <button onClick={handleUpdate}>
+                          更新
+                        </button>
+                        <button onClick={() => setEditingDeck(null)}>
+                          キャンセル
+                        </button>
+                      </div>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -147,25 +175,6 @@ export function Decklist() {
         ))
       )}
 
-      {editingDeck && (
-        <div>
-          <h3>デッキ編集</h3>
-          <input
-            type="text"
-            placeholder="デッキ名"
-            value={editDeckName}
-            onChange={(e) => setEditDeckName(e.target.value)}
-          />
-          <br />
-          <textarea
-            placeholder="コメント(任意)"
-            value={editComment}
-            onChange={(e) => setEditComment(e.target.value)}
-          />
-          <br />
-          <button onClick={handleUpdate}>更新</button>
-        </div>
-      )}
     </div>
   );
 }
