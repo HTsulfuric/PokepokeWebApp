@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { getFirestore, doc, setDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
+import { Helmet } from 'react-helmet';
 
 export function UsernamePage() {
   const [username, setUsername] = useState('');
@@ -32,6 +33,9 @@ export function UsernamePage() {
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <Helmet>
+        <title>ユーザーネーム設定</title>
+      </Helmet>
       <h2>ユーザーネームを設定</h2>
       <input
         type="text"

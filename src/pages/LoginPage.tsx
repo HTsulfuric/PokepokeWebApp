@@ -10,6 +10,7 @@ import {
   getAdditionalUserInfo,
 } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { Helmet } from 'react-helmet';
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -68,9 +69,12 @@ export function LoginPage() {
 
   return (
     <div className='d-flex flex-column align-items-center mt-5'>
+      <Helmet>
+        <title>ログイン</title>
+      </Helmet>
       <h2>ユーザー登録 / ログイン</h2>
       <button
-        className='btn btn-primary mt-3'onClick={handleGoogleLogin}>
+        className='btn btn-primary mt-3' onClick={handleGoogleLogin}>
         Googleでログイン
       </button>
     </div>

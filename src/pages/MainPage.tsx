@@ -6,6 +6,7 @@ import { DeckRegister } from '../components/DeckRegister';
 import { MatchRecord } from '../components/MatchRecord';
 import { ResultSearch } from '../components/ResultSearch';
 import { Decklist } from '../components/Decklist';
+import { Helmet } from 'react-helmet';
 
 import './MainPage.css';
 
@@ -38,12 +39,11 @@ export function MainPage() {
     fetchUsername();
   }, [auth, db]);
 
-  useEffect(() => {
-    document.title = `ポケポケ戦績管理α - ${username}さん`;
-  }, [username]);
-
   return (
     <div className="main-page">
+      <Helmet>
+        <title>ポケポケ戦績管理α</title>
+      </Helmet>
       <h1 className="title">ポケポケ戦績管理α - <span className="username">{username}さん</span></h1>
       <button className="logout-button" onClick={() => handleSignOut()}>ログアウト</button>
       <br />
