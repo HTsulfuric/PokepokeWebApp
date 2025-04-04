@@ -39,12 +39,14 @@ export function MainPage() {
     fetchUsername();
   }, [auth, db]);
 
+  const title = 'ポケポケ戦績管理α1.4';
+
   return (
     <div className="main-page">
       <Helmet>
-        <title>ポケポケ戦績管理α</title>
+        <title>{title}</title>
       </Helmet>
-      <h1 className="title">ポケポケ戦績管理α - <span className="username">{username}さん</span></h1>
+      <h1 className="title">{title} - <span className="username">{username}さん</span></h1>
       <button className="logout-button" onClick={() => handleSignOut()}>ログアウト</button>
       <br />
       <div className="tab-buttons">

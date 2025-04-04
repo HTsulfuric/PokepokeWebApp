@@ -33,7 +33,19 @@ const useFetchData = (db: Firestore, auth: Auth) => {
   return { decks, records };
 };
 
-const calculateRates = (records: Record[]) => {
+interface CalculateRates {
+  first: number;
+  second: number;
+  first_rate: number;
+  second_rate: number;
+  win: number;
+  win_first: number;
+  win_second: number;
+  total: number;
+  total_rate: number;
+}
+
+const calculateRates: (records: Record[]) => CalculateRates = (records) => {
   const first = records.filter((record) => record.order === 'first').length;
   const second = records.filter((record) => record.order === 'second').length;
   const win_first = records.filter((record) => record.result === 'win' && record.order === 'first').length;
@@ -42,11 +54,16 @@ const calculateRates = (records: Record[]) => {
   const rate_first = first === 0 ? 0 : (win_first / first) * 100;
   const rate_second = second === 0 ? 0 : (win_second / second) * 100;
 
+  const win = win_first + win_second;
+
   return {
     first: first,
     second: second,
     first_rate: rate_first,
     second_rate: rate_second,
+    win: win,
+    win_first: win_first,
+    win_second: win_second,
     total: first + second,
     total_rate: ((win_first + win_second) / (first + second)) * 100,
   };
@@ -56,7 +73,7 @@ export function ResultSearch() {
   const [generation, setGeneration] = useState('');
   const [myDeck, setMyDeck] = useState('');
   const [opDeck, setOpDeck] = useState('');
-  const [result, setResult] = useState<{ [key: string]: { first: number, second: number, first_rate: number, second_rate: number, total: number, total_rate: number } } | null>(null);
+  const [result, setResult] = useState<{ [key: string]: CalculateRates } | null>(null);
   const db = getFirestore();
   const auth = getAuth();
   const navigate = useNavigate();
@@ -86,14 +103,7 @@ export function ResultSearch() {
     }
 
     const results: {
-      [key: string]: {
-        first: number;
-        second: number,
-        first_rate: number,
-        second_rate: number,
-        total: number,
-        total_rate: number,
-      }
+      [key: string]: CalculateRates;
     } = {};
 
 
@@ -180,13 +190,24 @@ export function ResultSearch() {
             result[deck] && (
               <div key={deck}>
                 <h5>{deck}</h5>
-                <p>先行試合数: {result[deck].first}  後攻試合数: {result[deck].second} 先行勝率: {result[deck].first_rate.toFixed(2)}% 後攻勝率: {result[deck].second_rate.toFixed(2)}% </p>
-                <p>&nbsp;&nbsp;&nbsp;&nbsp;合計試合数: {result[deck].total} 勝率: {result[deck].total_rate.toFixed(2)}%</p>
+                <p>
+                  勝利数: {result[deck].win} ({result[deck].win_first}先行, {result[deck].win_second}後攻)
+                </p>
+                <p>
+                  先行試合数: {result[deck].first}  後攻試合数: {result[deck].second}
+                </p>
+                <p>
+                  先行勝率: {result[deck].first_rate.toFixed(2)}% 後攻勝率: {result[deck].second_rate.toFixed(2)}%
+                </p>
+                <p>
+                  &nbsp;&nbsp;&nbsp;&nbsp;合計試合数: {result[deck].total} 勝率: {result[deck].total_rate.toFixed(2)}%
+                </p>
               </div>
             )
           ))}
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 }
