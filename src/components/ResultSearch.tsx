@@ -194,6 +194,9 @@ export function ResultSearch() {
                   勝利数: {result[deck].win} ({result[deck].win_first}先行, {result[deck].win_second}後攻)
                 </p>
                 <p>
+                  敗北数: {result[deck].total - result[deck].win} ({result[deck].first - result[deck].win_first}先行, {result[deck].second - result[deck].win_second}後攻)
+                </p>
+                <p>
                   先行試合数: {result[deck].first}  後攻試合数: {result[deck].second}
                 </p>
                 <p>
